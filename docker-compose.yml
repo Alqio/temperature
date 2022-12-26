@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  db:
+    build: ./db/
+    restart: always
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - db-data:/var/lib/postgresql/data/
+
+  backend:
+    build: ./backend/
+    volumes:
+      - ./backend:/back
+    ports:
+      - "8000:8000" # For being able to connect from nginx to here
+      - "3000:3000" # For being able to connect from nginx to here
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+
+volumes:
+  db-data:
+    driver: local
