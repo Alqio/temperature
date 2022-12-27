@@ -51,6 +51,7 @@ app.use((err: Error, req: express.Request, res: express.Response, next: Function
   res.statusMessage = err.message;
   if (err.message === 'No temperatures found') {
     res.status(404);
+    res.json({});
   }
   if (err.message === 'Missing timestamp' || err.message === 'Missing temperature') {
     res.status(400);
