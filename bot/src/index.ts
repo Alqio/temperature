@@ -6,13 +6,12 @@ const TelegramBot = require('node-telegram-bot-api');
 const apiUrl = process.env.API_URL;
 const token = process.env.BOT_TOKEN;
 const defaultMessage = process.env.DEFAULT_MESSAGE || 'Lämpötila: @';
+const alertMessage = process.env.ALERT_MESSAGE || 'Lämpötila on kriittisen alhainen: @ C!';
 const chatsIds = process.env.CHATS?.split(',') || [];
 
 const chatMessageMap: Record<string, Message> = {};
 
-const messages: Message[] = [];
-
-let previousTemperature = 0;
+let previousTimestamp: Date = new Date();
 
 const bot = new TelegramBot(token, { polling: true });
 
@@ -24,15 +23,12 @@ bot.on('message', async (msg: Message) => {
   }
 });
 
-const updateMessage = (newMeasurement: any) => {
-  console.log(newMeasurement);
-  const { temperature, timestamp } = newMeasurement;
-
-  if (previousTemperature === temperature) {
+const updateMessage = (temperature: number, timestamp: Date) => {
+  if (previousTimestamp.getTime() === timestamp.getTime()) {
     return;
   }
-  console.log(`Updating temperature from ${previousTemperature} to ${temperature}.`);
-  previousTemperature = temperature;
+  console.log(`Updating temperature to ${temperature}.`);
+  previousTimestamp = timestamp;
 
   const newText = defaultMessage.replace('@', `${temperature}`);
 
@@ -48,11 +44,29 @@ const updateMessage = (newMeasurement: any) => {
   });
 };
 
+const sendAlert = (temperature: number, timestamp: Date) => {
+  if (previousTimestamp.getTime() === timestamp.getTime()) {
+    return;
+  }
+  previousTimestamp = timestamp;
+  const newText = alertMessage.replace('$', timestamp.toString()).replace('@', `${temperature}`);
+  chatsIds.forEach(async (chatId) => {
+    chatMessageMap[chatId] = await bot.sendMessage(chatId, newText);
+  });
+};
+
 setInterval(async () => {
   const response = await fetch(`${apiUrl}/temperature`);
   if (response.ok) {
     const latestMeasurement = await response.json();
-    updateMessage(latestMeasurement);
+    const { temperature, timestamp } = latestMeasurement;
+    const tsAsDate = new Date(timestamp);
+
+    if (temperature >= 5) {
+      updateMessage(temperature, tsAsDate);
+    } else {
+      sendAlert(temperature, tsAsDate);
+    }
   } else {
     console.log(`Fetching new temperatures failed, http error: ${response.status}, ${response.statusText}`);
   }

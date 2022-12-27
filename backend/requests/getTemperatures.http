@@ -1,5 +1,5 @@
 
-GET http://localhost:8000
+GET https://alqio.com:8000
 Accept: application/json
 
 ###

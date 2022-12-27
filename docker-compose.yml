@@ -25,6 +25,14 @@ services:
     depends_on:
       - db
 
+  bot:
+    build: ./bot/
+    restart: always
+    env_file:
+      - bot/.env.docker
+    depends_on:
+      - backend
+
   adminer:
     image: adminer
     restart: always
