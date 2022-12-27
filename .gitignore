@@ -1,6 +1,6 @@
 .env
 .env.docker
-backend/node_modules
-backend/yarn-error.log
+*/node_modules
+*/yarn-error.log
 .idea
-backend/build
+*/build
