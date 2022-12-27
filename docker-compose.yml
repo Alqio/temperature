@@ -13,14 +13,12 @@ services:
 
   backend:
     build: ./backend/
-    volumes:
-      - ./backend:/back
     ports:
       - "8000:8000" # For being able to connect from nginx to here
       - "3000:3000" # For being able to connect from nginx to here
     restart: always
     env_file:
-      - .env
+      - backend/.env.docker
     depends_on:
       - db
 

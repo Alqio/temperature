@@ -2,11 +2,10 @@ FROM node:18
 
 WORKDIR /app
 
-RUN npm install -g yarn
-
-COPY . .
+COPY . /app
 
 RUN yarn install
 
+RUN yarn run build
 
-CMD
+CMD ["yarn", "start"]
