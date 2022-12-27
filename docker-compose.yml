@@ -18,7 +18,8 @@ services:
       - "3000:3000" # For being able to connect from nginx to here
     restart: always
     volumes:
-      - "${CERT_FOLDER}:/app/certs/"
+      - "${CERT_FOLDER}/privkey.pem:/app/certs/privkey.pem"
+      - "${CERT_FOLDER}/privkey.pem:/app/certs/cert.pem"
     env_file:
       - backend/.env.docker
     depends_on:
