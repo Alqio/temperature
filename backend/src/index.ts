@@ -62,8 +62,8 @@ app.use((err: Error, req: express.Request, res: express.Response, next: Function
 if (process.env.NODE_ENV === 'prod') {
   const https = require('https');
 
-  const key = readFileSync(process.env.SSL_PRIVATE_KEY || '', 'utf8');
-  const cert = readFileSync(process.env.SSL_CERTIFICATE || '', 'utf8');
+  const key = readFileSync(process.env.SSL_PRIVATE_KEY || '');
+  const cert = readFileSync(process.env.SSL_CERTIFICATE || '');
 
   const credentials = {
     key,
