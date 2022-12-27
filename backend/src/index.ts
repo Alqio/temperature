@@ -7,6 +7,7 @@ connectClient();
 
 import express from 'express';
 import cors from 'cors';
+import { readFileSync } from 'fs';
 
 const app = express();
 
@@ -58,6 +59,23 @@ app.use((err: Error, req: express.Request, res: express.Response, next: Function
   next(err);
 });
 
-app.listen(port, () => {
-  console.log(`Server is listening on ${port}`);
-});
+if (process.env.NODE_ENV === 'prod') {
+  const https = require('https');
+
+  const key = readFileSync(process.env.SSL_PRIVATE_KEY || '', 'utf8');
+  const cert = readFileSync(process.env.SSL_CERTIFICATE || '', 'utf8');
+
+  const credentials = {
+    key,
+    cert
+  };
+
+  const server = https.createServer(credentials, app);
+  server.listen(port, () => {
+    console.log(`HTTPS server is listening on ${port}`);
+  });
+} else {
+  app.listen(port, () => {
+    console.log(`Server is listening on ${port}`);
+  });
+}
