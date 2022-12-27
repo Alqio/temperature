@@ -17,6 +17,8 @@ services:
       - "8000:8000" # For being able to connect from nginx to here
       - "3000:3000" # For being able to connect from nginx to here
     restart: always
+    volumes:
+      - "${CERT_FOLDER}:/app/certs/"
     env_file:
       - backend/.env.docker
     depends_on:
