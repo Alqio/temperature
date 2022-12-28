@@ -1,4 +1,6 @@
-FROM ubuntu:20
+FROM python:20.04
+
+RUN apt-get update
 
 RUN apt-get install bluetooth bluez blueman bluez-hcidump
 
