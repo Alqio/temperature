@@ -1,6 +1,6 @@
 #!/bin/bash
 
-hci0 down
-hci0 up
+hciconfig hci0 down
+hciconfig hci0 up
 
 python3 main.py

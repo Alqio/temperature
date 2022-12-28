@@ -12,4 +12,4 @@ WORKDIR /app
 
 COPY . .
 
-CMD ["start.sh"]
+CMD ./start.sh
