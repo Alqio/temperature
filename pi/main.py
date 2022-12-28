@@ -38,6 +38,9 @@ while True:
 
         print(f"{time}: {temperature}")
 
-        requests.post(f"{api_url}/temperatures", json=value)
+        response = requests.post(f"{api_url}/temperatures", json=value)
+
+        if not response.ok:
+            print(f"Failed to send temperature to server. Error: {response.status_code}, {response.content}")
 
     sleep(sleep_time)

@@ -38,6 +38,7 @@ app.get('/temperature', async (req, res) => {
 
 app.post('/temperatures', async (req, res) => {
   const { timestamp, temperature } = req.body;
+  console.log(`Received new datapoint: ${timestamp}: ${temperature}`);
   if (!timestamp) throw Error('Missing timestamp');
   if (!temperature) throw Error('Missing temperature');
 
