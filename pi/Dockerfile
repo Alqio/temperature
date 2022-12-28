@@ -1,5 +1,7 @@
 FROM ubuntu:20.04
 
+ENV Europe/Helsinki
+
 RUN apt-get update
 
 RUN apt-get install bluetooth bluez blueman bluez-hcidump -y
