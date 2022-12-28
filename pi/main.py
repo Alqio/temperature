@@ -15,7 +15,7 @@ load_dotenv()
 api_url = os.getenv("API_URL")
 sensor_macs = os.getenv("SENSOR_MACS").split(",")
 
-print(sensor_macs)
+print("Found macs:", sensor_macs)
 
 timeout_in_seconds = 5
 sleep_time = 5
@@ -38,7 +38,7 @@ while True:
 
         print(f"{time}: {temperature}")
 
-        response = requests.post(f"{api_url}/temperatures", json=value)
+        response = requests.post(f"{api_url}/temperatures", json=data)
 
         if not response.ok:
             print(f"Failed to send temperature to server. Error: {response.status_code}, {response.content}")

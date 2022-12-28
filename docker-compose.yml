@@ -19,7 +19,7 @@ services:
     restart: always
     volumes:
       - "${CERT_FOLDER}/privkey.pem:/app/certs/privkey.pem"
-      - "${CERT_FOLDER}/cert.pem:/app/certs/cert.pem"
+      - "${CERT_FOLDER}/fullchain.pem:/app/certs/fullchain.pem"
     env_file:
       - backend/.env.docker
     depends_on:
