@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-ENV Europe/Helsinki
+ENV TZ="Europe/Helsinki"
 
 RUN apt-get update
 
