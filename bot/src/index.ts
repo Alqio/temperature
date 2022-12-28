@@ -30,7 +30,7 @@ const updateMessage = (temperature: number, timestamp: Date) => {
   console.log(`Updating temperature to ${temperature}.`);
   previousTimestamp = timestamp;
 
-  const newText = defaultMessage.replace('@', `${temperature}`);
+  const newText = defaultMessage.replace('$', timestamp.toString()).replace('@', `${temperature}`);
 
   chatsIds.forEach(async (chatId) => {
     if (chatId in chatMessageMap) {
@@ -55,7 +55,7 @@ const sendAlert = (temperature: number, timestamp: Date) => {
   });
 };
 
-setInterval(async () => {
+const getLatestTemperature = async () => {
   const response = await fetch(`${apiUrl}/temperature`);
   if (response.ok) {
     const latestMeasurement = await response.json();
@@ -70,6 +70,32 @@ setInterval(async () => {
   } else {
     console.log(`Fetching new temperatures failed, http error: ${response.status}, ${response.statusText}`);
   }
+};
+
+const getMinAndMax = async () => {
+  const now = new Date();
+  const past = new Date();
+  past.setDate(past.getDate() - 3);
+  const response = await fetch(`${apiUrl}/temperatures?$start=${past.toString()}&end=${now.toString()}`);
+
+  if (response.ok) {
+    const latestMeasurement = await response.json();
+    const { temperature, timestamp } = latestMeasurement;
+    const tsAsDate = new Date(timestamp);
+
+    if (temperature >= 5) {
+      updateMessage(temperature, tsAsDate);
+    } else {
+      sendAlert(temperature, tsAsDate);
+    }
+  } else {
+    console.log(`Fetching new temperatures failed, http error: ${response.status}, ${response.statusText}`);
+  }
+};
+
+setInterval(async () => {
+  await getLatestTemperature();
+  await getMinAndMax();
 }, 3 * 1000);
 
 console.log('Bot started.');
