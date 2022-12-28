@@ -22,7 +22,8 @@ sleep_time = 5
 
 
 def get_time():
-    return datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
+    # [:-3] as otherwise there are 6 millisecond digits
+    return datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
 
 
 while True:
