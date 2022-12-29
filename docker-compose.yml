@@ -7,7 +7,10 @@ services:
     env_file:
       - ./pi/.env
     network_mode: host
-    privileged: true
+    #privileged: true
+    cap_add:
+      - SYS_ADMIN
+      - NET_ADMIN
 
   db:
     build: ./db/
