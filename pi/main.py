@@ -14,7 +14,7 @@ sensor_macs = os.getenv("SENSOR_MACS").split(",")
 print("Using macs:", sensor_macs)
 
 timeout_in_seconds = 5
-sleep_time = 5
+sleep_time = 60
 
 
 def get_time():
