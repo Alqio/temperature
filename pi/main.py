@@ -3,10 +3,6 @@ from datetime import datetime
 from time import sleep
 from dotenv import load_dotenv
 
-import ruuvitag_sensor
-from ruuvitag_sensor.log import log
-
-from urllib.parse import quote
 import requests
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
