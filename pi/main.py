@@ -15,9 +15,9 @@ load_dotenv()
 api_url = os.getenv("API_URL")
 sensor_macs = os.getenv("SENSOR_MACS").split(",")
 
-print("Found macs:", sensor_macs)
+print("Using macs:", sensor_macs)
 
-timeout_in_seconds = 30
+timeout_in_seconds = 5
 sleep_time = 5
 
 
