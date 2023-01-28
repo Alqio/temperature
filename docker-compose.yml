@@ -39,6 +39,7 @@ services:
   bot:
     build: ./bot/
     restart: always
+    network_mode: host
     env_file:
       - bot/.env.docker
 
