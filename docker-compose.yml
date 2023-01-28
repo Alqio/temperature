@@ -41,8 +41,6 @@ services:
     restart: always
     env_file:
       - bot/.env.docker
-    depends_on:
-      - backend
 
   adminer:
     image: adminer
