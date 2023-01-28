@@ -25,6 +25,14 @@ bot.on('message', async (msg: Message) => {
   }
 });
 
+const formatDate = (date: Date) => {
+  const month = date.getMonth() + 1;
+
+  return `${date.getDate()}/${
+    month < 10 ? '0' + month : month
+  }/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+};
+
 const updateMessage = (temperature: number, timestamp: Date) => {
   if (previousTimestamp.getTime() === timestamp.getTime()) {
     return;
@@ -35,7 +43,7 @@ const updateMessage = (temperature: number, timestamp: Date) => {
   const shouldAlert = temperature <= 5;
   const baseText = shouldAlert ? alertMessage : defaultMessage;
 
-  const newText = baseText.replace('$', timestamp.toString()).replace('@', `${temperature}`);
+  const newText = baseText.replace('$', formatDate(timestamp)).replace('@', `${temperature}`);
 
   chatsIds.forEach(async (chatId) => {
     if (chatId in chatMessageMap && !hasAlerted && !shouldAlert) {
