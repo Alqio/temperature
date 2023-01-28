@@ -47,10 +47,15 @@ const updateMessage = (temperature: number, timestamp: Date) => {
 
   chatsIds.forEach(async (chatId) => {
     if (chatId in chatMessageMap && !hasAlerted && !shouldAlert) {
-      chatMessageMap[chatId] = await bot.editMessageText(newText, {
-        chat_id: chatMessageMap[chatId].chat.id,
-        message_id: chatMessageMap[chatId].message_id
-      });
+      try {
+        chatMessageMap[chatId] = await bot.editMessageText(newText, {
+          chat_id: chatMessageMap[chatId].chat.id,
+          message_id: chatMessageMap[chatId].message_id
+        });
+      } catch (e: any) {
+        console.log(`Failed to update message, error: ${e.toString()}`);
+        chatMessageMap[chatId] = await bot.sendMessage(chatId, newText);
+      }
     } else if (chatId in chatMessageMap && hasAlerted && !shouldAlert) {
       chatMessageMap[chatId] = await bot.sendMessage(chatId, newText);
       hasAlerted = false;
