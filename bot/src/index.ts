@@ -9,6 +9,8 @@ const defaultMessage = process.env.DEFAULT_MESSAGE || 'Lämpötila: @';
 const alertMessage = process.env.ALERT_MESSAGE || 'Lämpötila on kriittisen alhainen: @ C!';
 const chatsIds = process.env.CHATS?.split(',') || [];
 
+let hasAlerted = false;
+
 const chatMessageMap: Record<string, Message> = {};
 
 let previousTimestamp: Date = new Date();
@@ -19,7 +21,7 @@ bot.on('message', async (msg: Message) => {
   const chatId = msg.chat.id;
   console.log(`Message received from ${chatId}. Message: ${msg.text}`);
   if (!(chatId in chatMessageMap)) {
-    chatMessageMap[chatId] = await bot.sendMessage(chatId, 'Chat noted.');
+    chatMessageMap[chatId] = await bot.sendMessage(chatId, 'Chat registered.');
   }
 });
 
@@ -30,28 +32,27 @@ const updateMessage = (temperature: number, timestamp: Date) => {
   console.log(`Updating temperature to ${temperature}.`);
   previousTimestamp = timestamp;
 
-  const newText = defaultMessage.replace('$', timestamp.toString()).replace('@', `${temperature}`);
+  const shouldAlert = temperature <= 5;
+  const baseText = shouldAlert ? alertMessage : defaultMessage;
+
+  const newText = baseText.replace('$', timestamp.toString()).replace('@', `${temperature}`);
 
   chatsIds.forEach(async (chatId) => {
-    if (chatId in chatMessageMap) {
+    if (chatId in chatMessageMap && !hasAlerted && !shouldAlert) {
       chatMessageMap[chatId] = await bot.editMessageText(newText, {
         chat_id: chatMessageMap[chatId].chat.id,
         message_id: chatMessageMap[chatId].message_id
       });
-    } else {
+    } else if (chatId in chatMessageMap && hasAlerted && !shouldAlert) {
       chatMessageMap[chatId] = await bot.sendMessage(chatId, newText);
-    }
-  });
-};
+      hasAlerted = false;
+    } else if (!(chatId in chatMessageMap) || (!hasAlerted && shouldAlert)) {
+      chatMessageMap[chatId] = await bot.sendMessage(chatId, newText);
 
-const sendAlert = (temperature: number, timestamp: Date) => {
-  if (previousTimestamp.getTime() === timestamp.getTime()) {
-    return;
-  }
-  previousTimestamp = timestamp;
-  const newText = alertMessage.replace('$', timestamp.toString()).replace('@', `${temperature}`);
-  chatsIds.forEach(async (chatId) => {
-    chatMessageMap[chatId] = await bot.sendMessage(chatId, newText);
+      if (shouldAlert) {
+        hasAlerted = true;
+      }
+    }
   });
 };
 
@@ -62,11 +63,7 @@ const getLatestTemperature = async () => {
     const { temperature, timestamp } = latestMeasurement;
     const tsAsDate = new Date(timestamp);
 
-    if (temperature >= 5) {
-      updateMessage(temperature, tsAsDate);
-    } else {
-      sendAlert(temperature, tsAsDate);
-    }
+    updateMessage(temperature, tsAsDate);
   } else {
     console.log(`Fetching new temperatures failed, http error: ${response.status}, ${response.statusText}`);
   }
@@ -83,11 +80,7 @@ const getMinAndMax = async () => {
     const { temperature, timestamp } = latestMeasurement;
     const tsAsDate = new Date(timestamp);
 
-    if (temperature >= 5) {
-      updateMessage(temperature, tsAsDate);
-    } else {
-      sendAlert(temperature, tsAsDate);
-    }
+    updateMessage(temperature, tsAsDate);
   } else {
     console.log(`Fetching new temperatures failed, http error: ${response.status}, ${response.statusText}`);
   }
@@ -95,7 +88,7 @@ const getMinAndMax = async () => {
 
 setInterval(async () => {
   await getLatestTemperature();
-  await getMinAndMax();
-}, 3 * 1000);
+  //await getMinAndMax();
+}, 5 * 1000);
 
 console.log('Bot started.');
