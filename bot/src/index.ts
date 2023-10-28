@@ -1,4 +1,6 @@
 import { Message } from 'node-telegram-bot-api';
+import dateFormat, { masks } from "dateformat";
+
 
 require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
@@ -26,11 +28,7 @@ bot.on('message', async (msg: Message) => {
 });
 
 const formatDate = (date: Date) => {
-  const month = date.getMonth() + 1;
-
-  return `${date.getDate()}/${
-    month < 10 ? '0' + month : month
-  }/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  return dateFormat(date, "dd/mm/yyyy HH:MM:ss")
 };
 
 const updateMessage = (temperature: number, timestamp: Date) => {
