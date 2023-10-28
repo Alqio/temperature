@@ -22,22 +22,20 @@ def get_time():
     return datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
 
 
-while True:
-    datas = RuuviTagSensor.get_data_for_sensors(sensor_macs, timeout_in_seconds)
+datas = RuuviTagSensor.get_data_for_sensors(sensor_macs, timeout_in_seconds)
 
-    for key, value in datas.items():
-        time = get_time()
-        temperature = value["temperature"]
-        data = {
-            "temperature": value["temperature"],
-            "timestamp": time
-        }
+for key, value in datas.items():
+    time = get_time()
+    temperature = value["temperature"]
+    data = {
+        "temperature": value["temperature"],
+        "timestamp": time
+    }
 
-        print(f"{time}: {temperature}")
+    print(f"{time}: {temperature}")
 
-        response = requests.post(f"{api_url}/temperatures", json=data)
+    response = requests.post(f"{api_url}/temperatures", json=data)
 
-        if not response.ok:
-            print(f"Failed to send temperature to server. Error: {response.status_code}, {response.content}")
+    if not response.ok:
+        print(f"Failed to send temperature to server. Error: {response.status_code}, {response.content}")
 
-    sleep(sleep_time)
