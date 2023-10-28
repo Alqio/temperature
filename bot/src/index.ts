@@ -1,12 +1,14 @@
 import { Message } from 'node-telegram-bot-api';
-import dateFormat, { masks } from "dateformat";
+import dateFormat from "dateformat";
 
+import { config } from 'dotenv';
 
-require('dotenv').config();
-const TelegramBot = require('node-telegram-bot-api');
+config();
+
+import TelegramBot from 'node-telegram-bot-api';
 
 const apiUrl = process.env.API_URL;
-const token = process.env.BOT_TOKEN;
+const token = process.env.BOT_TOKEN || '';
 const defaultMessage = process.env.DEFAULT_MESSAGE || 'Lämpötila: @';
 const alertMessage = process.env.ALERT_MESSAGE || 'Lämpötila on kriittisen alhainen: @ C!';
 const chatsIds = process.env.CHATS?.split(',') || [];
@@ -46,10 +48,13 @@ const updateMessage = (temperature: number, timestamp: Date) => {
   chatsIds.forEach(async (chatId) => {
     if (chatId in chatMessageMap && !hasAlerted && !shouldAlert) {
       try {
-        chatMessageMap[chatId] = await bot.editMessageText(newText, {
+        const edited = await bot.editMessageText(newText, {
           chat_id: chatMessageMap[chatId].chat.id,
           message_id: chatMessageMap[chatId].message_id
         });
+        if (typeof(edited) !== 'boolean') {
+          chatMessageMap[chatId] = edited;
+        }
       } catch (e: any) {
         console.log(`Failed to update message, error: ${e.toString()}`);
         chatMessageMap[chatId] = await bot.sendMessage(chatId, newText);

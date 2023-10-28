@@ -5,7 +5,7 @@
   "author": "alqio",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'node --loader ts-node/esm' src/index.ts",
     "build": "tsc",
     "start": "NODE_ENV=prod node build/index.js"
   },
