@@ -52,6 +52,11 @@
   resolved "https://registry.yarnpkg.com/@types/caseless/-/caseless-0.12.2.tgz#f65d3d6389e01eeb458bd54dc8f52b95a9463bc8"
   integrity sha512-6ckxMjBBD8URvjB6J3NcnuAn5Pkl7t3TizAg+xdlzzQGSPSmBcXf8KoIH0ua/i+tio+ZRUHEXp0HEmvaR4kt0w==
 
+"@types/dateformat@^5.0.1":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@types/dateformat/-/dateformat-5.0.1.tgz#81e8db3d8aa66e2a8cb347d8810dc72d4120342b"
+  integrity sha512-mdFQYNj44kRls3iZTgW0vkMOyko70KRsxkjD6qjSdfkVZLXlIFU6w9mYd62zv2uZBYyKbYkr9Mh0EVulIvyZ3g==
+
 "@types/node-telegram-bot-api@^0.57.6":
   version "0.57.6"
   resolved "https://registry.yarnpkg.com/@types/node-telegram-bot-api/-/node-telegram-bot-api-0.57.6.tgz#4c194ec6492559039f88bcebc00c07384c852ea0"
