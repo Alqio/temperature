@@ -28,7 +28,7 @@ bot.on('message', async (msg: Message) => {
 });
 
 const formatDate = (date: Date) => {
-  return dateFormat(date, "dd/mm/yyyy HH:MM:ss")
+  return dateFormat(date, "dd/mm/yyyy HH:MM")
 };
 
 const updateMessage = (temperature: number, timestamp: Date) => {
