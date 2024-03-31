@@ -7,7 +7,8 @@ connectClient();
 
 import express from 'express';
 import cors from 'cors';
-import { readFileSync } from 'fs';
+import { fstat, readFileSync, watch } from 'fs';
+import { createServer } from 'https';
 
 const app = express();
 
@@ -61,21 +62,36 @@ app.use((err: Error, req: express.Request, res: express.Response, next: Function
   next(err);
 });
 
-if (process.env.NODE_ENV === 'prod') {
-  const https = require('https');
-
+const readCertsSync = () => {
   const key = readFileSync(process.env.SSL_PRIVATE_KEY || '');
   const cert = readFileSync(process.env.SSL_CERTIFICATE || '');
-
-  const credentials = {
+  
+  return {
     key,
     cert
-  };
+  }
 
-  const server = https.createServer(credentials, app);
+}
+
+if (process.env.NODE_ENV === 'prod') {
+  const credentials = readCertsSync();
+
+  const server = createServer(credentials, app);
+
+  let watchTimeOut: NodeJS.Timeout;
+  
+  watch(process.env.SSL_PRIVATE_KEY || '', () => {
+    clearTimeout(watchTimeOut);
+    watchTimeOut = setTimeout(() => {
+      server.setSecureContext(readCertsSync());
+      console.log("Updated certs");
+    }, 1000);
+  });
+
   server.listen(port, () => {
     console.log(`HTTPS server is listening on ${port}`);
   });
+
 } else {
   app.listen(port, () => {
     console.log(`Server is listening on ${port}`);
